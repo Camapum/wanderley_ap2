@@ -1,6 +1,7 @@
 from modulo import(pegar_balanco, indicador_comparacao, pegar_preco_corrigido, pegar_preco_diversos)
 import pandas as pd
 
+#função com calculo de roe e eva
 def main():
     list_tickers = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3']
     list_tri = ["20244T"]
@@ -24,7 +25,7 @@ main()
 ticker = "LREN3"
 data_inicial = "2023-04-01"
 data_final = "2024-03-31"
-df_preco = pegar_preco_corrigido(ticker, data_inicial, data_final)
+df_preco = pegar_preco_corrigidoS(ticker, data_inicial, data_final)
 preco_inicial = df_preco[0:1]["fechamento"].iloc[0]
 preco_final = df_preco[-1:]["fechamento"].iloc[0]
 lucro = (preco_final/preco_inicial) - 1
