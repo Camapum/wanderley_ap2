@@ -195,9 +195,9 @@ def pegar_preco_corrigido(ticker, data_inicial, data_final):
     url = 'https://laboratoriodefinancas.com/api/v1/preco-corrigido'
     r = requests.get(url, params=params, headers=headers)
     resposta = r.json()
-    if 'dados' in resposta:S
+    if 'dados' in resposta:
         return pd.DataFrame(resposta['dados'])
-        else:
+    else:
         print("⚠️ Resposta da API não contém 'dados':", resposta)
         return pd.DataFrame()
     
