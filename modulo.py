@@ -15,6 +15,19 @@ def pegar_balanco(ticker, ano_tri):
     df = pd.DataFrame(balanco)
     return df
 
+#parametros para pegar balanço
+params = {'ticker': 'AZZA','ano_tri': '20244T',}
+r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
+dados = r.json()['dados'][0]
+balanco = dados['balanco']
+df_24 = pd.DataFrame(balanco)
+
+params = {'ticker': 'AZZA','ano_tri': '20234T',}
+r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
+dados = r.json()['dados'][0]
+balanco = dados['balanco']
+df_23 = pd.DataFrame(balanco)
+
 
 #teste valor_contabil 
 def valor_contabil(df, conta, descricao):

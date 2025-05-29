@@ -1,18 +1,7 @@
 from modulo import(pegar_balanco, indicador_comparacao, pegar_preco_corrigido, pegar_preco_diversos, obter_indicadores_empresas)
 import pandas as pd
 import requests
-#parametros para pegar balanço
-params = {'ticker': 'AZZA','ano_tri': '20244T',}
-r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
-dados = r.json()['dados'][0]
-balanco = dados['balanco']
-df_24 = pd.DataFrame(balanco)
-
-params = {'ticker': 'AZZA','ano_tri': '20234T',}
-r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
-dados = r.json()['dados'][0]
-balanco = dados['balanco']
-df_23 = pd.DataFrame(balanco)
+import matplotlib.pyplot as plt
 
 #pegar_balanço
 balanco_renner = pegar_balanco('LREN3', '20234T')
@@ -101,48 +90,44 @@ comparar_retorno_ticker_ibov("CEAB3", "2014-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("GUAR3", "2014-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("AMAR3", "2014-04-01", "2024-03-31")
 
-import matplotlib.pyplot as plt
-
-def calcular_retorno(ticker, data_inicial, data_final):
-    """Retorna o retorno percentual do ativo no período."""
-    if ticker.lower() == "ibov":
-        df = pegar_preco_diversos(ticker, data_inicial, data_final)
-    else:
-        df = pegar_preco_corrigido(ticker, data_inicial, data_final)
-    if not df.empty:
-        preco_inicial = df.iloc[0]["fechamento"]
-        preco_final = df.iloc[-1]["fechamento"]
-        return (preco_final / preco_inicial) - 1
-    else:
-        return None
+def calcular_retorno_acumulado(df):
+    """Retorna uma série de retorno acumulado (%) ao longo do tempo."""
+    df = df.sort_values("data")
+    df["retorno"] = df["fechamento"].pct_change().fillna(0)
+    df["retorno_acumulado"] = (1 + df["retorno"]).cumprod() - 1
+    return df[["data", "retorno_acumulado"]]
 
 tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "ibov"]
-periodos = [
-    {"label": "1 ano", "data_inicial": "2023-04-01", "data_final": "2024-03-31"},
-    {"label": "5 anos", "data_inicial": "2019-04-01", "data_final": "2024-03-31"},
-    {"label": "10 anos", "data_inicial": "2014-04-01", "data_final": "2024-03-31"},
-]
+data_inicial = "2014-04-01"
+data_final = "2024-03-31"
 
-# Montar os dados para o gráfico
-labels = [p["label"] for p in periodos]
-retornos = {ticker: [] for ticker in tickers}
+#teste de grafico 
+def plotar_retorno_acumulado(tickers, data_inicial, data_final):
+    plt.figure(figsize=(12, 7))
 
-for periodo in periodos:
-    data_inicial = periodo["data_inicial"]
-    data_final = periodo["data_final"]
     for ticker in tickers:
-        ret = calcular_retorno(ticker, data_inicial, data_final)
-        retornos[ticker].append(ret if ret is not None else 0)
+        if ticker.lower() == "ibov":
+            df = pegar_preco_diversos(ticker, data_inicial, data_final)
+        else:
+            df = pegar_preco_corrigido(ticker, data_inicial, data_final)
+        if not df.empty:
+            df["data"] = pd.to_datetime(df["data"])
+            serie = calcular_retorno_acumulado(df)
+            plt.plot(serie["data"], serie["retorno_acumulado"]*100, label=ticker.upper())
+        else:
+            print(f"⚠️ Não foi possível obter dados de {ticker}.")
 
-# Plotando o gráfico
-plt.figure(figsize=(10, 6))
-for ticker in tickers:
-    plt.plot(labels, [r*100 for r in retornos[ticker]], marker='o', label=ticker.upper())
+    plt.title(f"Retorno acumulado diário dos ativos e IBOV ({data_inicial} a {data_final})")
+    plt.xlabel("Data")
+    plt.ylabel("Retorno acumulado (%)")
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.show()
 
-plt.title("Retorno acumulado dos ativos e IBOV por período")
-plt.xlabel("Período")
-plt.ylabel("Retorno (%)")
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.5)
-plt.tight_layout()
-plt.show()
+# Exemplo de uso:
+tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "ibov"]
+data_inicial = "2014-04-01"
+data_final = "2024-03-31"
+plotar_retorno_acumulado(tickers, data_inicial, data_final)
+
