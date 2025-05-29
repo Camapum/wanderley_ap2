@@ -147,15 +147,16 @@ def pegar_preco_corrigido(ticker, data_inicial, data_final):
     return df
   
 def pegar_preco_diversos(ticker, data_inicial, data_final):
-    import requests
-    import pandas as pd
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
+    headers = {'Authorization': 'JWT {}'.format(token)}
+    ticker = f"{ticker}"
+    data_inicial = f"{data_inicial}"
+    data_final = f"{data_final}"
     params = {
         'ticker': ticker,
         'data_ini': data_inicial,
         'data_fim': data_final
     }
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
-    headers = {'Authorization': 'JWT {}'.format(token)}
     url = 'https://laboratoriodefinancas.com/api/v1/preco-diversos'
     r = requests.get(url, params=params, headers=headers)
     resposta = r.json()['dados']
