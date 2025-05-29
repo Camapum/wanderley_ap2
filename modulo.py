@@ -2,21 +2,6 @@ import requests
 import pandas as pd
 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
 headers = {'Authorization': 'JWT {}'.format(token)}
-params = {'ticker': 'AZZA','ano_tri': '20244T',}
-r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
-dados = r.json()['dados'][0]
-balanco = dados['balanco']
-df_24 = pd.DataFrame(balanco)
-
-import requests
-import pandas as pd
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
-headers = {'Authorization': 'JWT {}'.format(token)}
-params = {'ticker': 'AZZA','ano_tri': '20234T',}
-r = requests.get('https://laboratoriodefinancas.com/api/v1/balanco',params=params, headers=headers)
-dados = r.json()['dados'][0]
-balanco = dados['balanco']
-df_23 = pd.DataFrame(balanco)
 
 
 #FUNÇÃO PARA PEGAR O BALANÇO 
@@ -30,15 +15,6 @@ def pegar_balanco(ticker, ano_tri):
     df = pd.DataFrame(balanco)
     return df
 
-balanco_renner = pegar_balanco('LREN3', '20234T')
-balanco_cea = pegar_balanco('CEAB3', '20234T')
-balanco_guar = pegar_balanco('GUAR3', '20234T')
-balanco_amar = pegar_balanco('AMAR3', '20234T')
-
-print(balanco_renner)
-print(balanco_cea)
-print(balanco_guar)
-print(balanco_amar)
 
 #teste valor_contabil 
 def valor_contabil(df, conta, descricao):
@@ -138,13 +114,6 @@ def obter_indicadores_empresas(empresas, trimestre_atual, trimestre_anterior):
             print(f"Erro ao processar {empresa}: {e}")
     return pd.DataFrame(resultados)
 
-# Exemplo de uso:
-empresas = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3']
-trimestre_atual = '20234T'
-trimestre_anterior = '20233T'
-
-df_indicadores = obter_indicadores_empresas(empresas, trimestre_atual, trimestre_anterior)
-print(df_indicadores)
 
 # Função para calcular indicadores de comparação entre empresas
 def indicador_comparacao(df):
@@ -160,62 +129,36 @@ def indicador_comparacao(df):
         'eva': eva
     }
 
-# #comparativo back test (1,5,10 anos) a partir do eva e roe
-# #pegar os periodos de "23-04-01" a "24-03-31" (1ano)
-# #comparar com o ibov no mesmo periodo
-
-def main():
-    list_tickers = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3']
-    list_tri = ["20243T"]
-    df_comparacao = pd.DataFrame()
-    for ticker in list_tickers:
-        for trimestre in list_tri:
-            # ticker = "EZTC3"
-            # trimestre = "20234T"
-            df = pegar_balanco(ticker, trimestre)
-            comparacao = indicador_comparacao(df)
-            df_final = pd.DataFrame()
-            df_final["ticker"]=[ticker]
-            df_final["roe"]=comparacao["roe"]
-            df_final["eva"]=comparacao["eva"]
-            df_comparacao = pd.concat([df_comparacao, df_final], axis=0,ignore_index=True)
-        print(df_comparacao)
-
-# main()
-
-#teste pegar preco corrigido
 def pegar_preco_corrigido(ticker, data_inicial, data_final):
-    params = {
-        'ticker': ticker,
-        'data_inicial': data_inicial,
-        'data_final': data_final
-    }
     token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
     headers = {'Authorization': 'JWT {}'.format(token)}
+    ticker = f"{ticker}"
+    data_inicial = f"{data_inicial}"
+    data_final = f"{data_final}"
+    params = {
+        'ticker': ticker,
+        'data_ini': data_inicial,
+        'data_fim': data_final
+    }
     url = 'https://laboratoriodefinancas.com/api/v1/preco-corrigido'
     r = requests.get(url, params=params, headers=headers)
-    resposta = r.json()
-    if 'dados' in resposta:
-        return pd.DataFrame(resposta['dados'])
-    else:
-        print("⚠️ Resposta da API não contém 'dados':", resposta)
-        return pd.DataFrame()
-    
+    resposta = r.json()['dados']
+    df = pd.DataFrame(resposta)
+    return df
+  
 def pegar_preco_diversos(ticker, data_inicial, data_final):
     import requests
     import pandas as pd
     params = {
         'ticker': ticker,
-        'data_inicial': data_inicial,
-        'data_final': data_final
+        'data_ini': data_inicial,
+        'data_fim': data_final
     }
     token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTM0ODEyLCJpYXQiOjE3NDgzNDI3ODQsImp0aSI6IjEwODkzOTVmZWUxODRhNDJhNGU0NDc1MGM3ZDAwMjFmIiwidXNlcl9pZCI6NjZ9.LIlgZXw3GMaSzx-aBSQC50cJSZDn0UVk-zc1bZJotHE"
     headers = {'Authorization': 'JWT {}'.format(token)}
     url = 'https://laboratoriodefinancas.com/api/v1/preco-diversos'
     r = requests.get(url, params=params, headers=headers)
-    resposta = r.json()
-    if 'dados' in resposta:
-        return pd.DataFrame(resposta['dados'])
-    else:
-        print("⚠️ Resposta da API não contém 'dados':", resposta)
-        return pd.DataFrame()
+    resposta = r.json()['dados']
+    df = pd.DataFrame(resposta)
+    return df
+    
