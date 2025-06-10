@@ -8,14 +8,16 @@ balanco_renner = pegar_balanco('LREN3', '20234T')
 balanco_cea = pegar_balanco('CEAB3', '20234T')
 balanco_guar = pegar_balanco('GUAR3', '20234T')
 balanco_amar = pegar_balanco('AMAR3', '20234T')
+balanco_azza = pegar_balanco('AZZA3', '20234T') 
 
 print(balanco_renner)
 print(balanco_cea)
 print(balanco_guar)
 print(balanco_amar)
+print(balanco_azza)
 
 #pegar_indicadores
-empresas = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3']
+empresas = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3', 'AZZA3']
 trimestre_atual = '20234T'
 trimestre_anterior = '20233T'
 
@@ -25,7 +27,7 @@ print(df_indicadores)
 
 #função com calculo de roe e eva
 def main():
-    list_tickers = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3']
+    list_tickers = ['LREN3', 'CEAB3', 'GUAR3', 'AMAR3', 'AZZA3']
     list_tri = ["20244T"]
     df_comparacao = pd.DataFrame()
     for ticker in list_tickers:
@@ -77,18 +79,21 @@ comparar_retorno_ticker_ibov("LREN3", "2023-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("CEAB3", "2023-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("GUAR3", "2023-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("AMAR3", "2023-04-01", "2024-03-31")
+comparar_retorno_ticker_ibov("AZZA3", "2023-04-01", "2024-03-31")
 
 #backteste de 5 anos 
 comparar_retorno_ticker_ibov("LREN3", "2019-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("CEAB3", "2019-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("GUAR3", "2019-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("AMAR3", "2019-04-01", "2024-03-31")
+comparar_retorno_ticker_ibov("AZZA3", "2019-04-01", "2024-03-31")
 
 #Backteste de 10 anos
 comparar_retorno_ticker_ibov("LREN3", "2014-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("CEAB3", "2014-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("GUAR3", "2014-04-01", "2024-03-31")
 comparar_retorno_ticker_ibov("AMAR3", "2014-04-01", "2024-03-31")
+comparar_retorno_ticker_ibov("AZZA3", "2014-04-01", "2024-03-31")
 
 def calcular_retorno_acumulado(df):
     """Retorna uma série de retorno acumulado (%) ao longo do tempo."""
@@ -97,7 +102,7 @@ def calcular_retorno_acumulado(df):
     df["retorno_acumulado"] = (1 + df["retorno"]).cumprod() - 1
     return df[["data", "retorno_acumulado"]]
 
-tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "ibov"]
+tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "AZZA3", "ibov"]
 data_inicial = "2014-04-01"
 data_final = "2024-03-31"
 
@@ -126,7 +131,7 @@ def plotar_retorno_acumulado(tickers, data_inicial, data_final):
     plt.show()
 
 # Exemplo de uso:
-tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "ibov"]
+tickers = ["LREN3", "CEAB3", "GUAR3", "AMAR3", "AZZA3", "ibov"]
 data_inicial = "2014-04-01"
 data_final = "2024-03-31"
 plotar_retorno_acumulado(tickers, data_inicial, data_final)
